@@ -27,6 +27,19 @@ async function run() {
 
         const database = client.db("TaskManDB");
         const userCollection = database.collection("users");
+        const taskCollection = database.collection("tasks");
+
+
+        // POST API
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const email = user?.email;
+            const query = { email };
+            const exists = await userCollection.findOne(query);
+            if (exists) return res.send({ message: "User already exists" });
+            const result = await userCollection.insertOne(user);
+            res.send(result);
+        })
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
